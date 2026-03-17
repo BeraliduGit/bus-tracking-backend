@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import busRoutes from "./routes/bus.routes.js";
 
 const app = express(); //create an express application
 app.use(cors({
@@ -17,3 +18,6 @@ app.use("/api/v1/users", userRoutes);
 
 // example route: http://localhost:4000/api/v1/users/register
 export default app;
+
+//Connect Routes to App
+app.use("/api/bus", busRoutes);
