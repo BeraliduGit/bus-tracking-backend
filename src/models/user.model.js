@@ -2,11 +2,15 @@ import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 
 const userSchema = new Schema({
-    email: {
+    fullName: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    phoneNumber: {
         type: String,
         required: true,
         unique: true,
-        lowercase: true,
         trim: true
     },
     password: {
