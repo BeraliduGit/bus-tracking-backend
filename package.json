@@ -1,7 +1,7 @@
 {
-  "name": "intro-to-backing",
+  "name": "unified-bus-tracking-backend",
   "version": "1.0.0",
-  "description": "a tutorial for intro to backend",
+  "description": "Unified Bus Tracking backend (passenger + driver)",
   "homepage": "https://github.com/BeraliduGit/Intro-to-Backing#readme",
   "bugs": {
     "url": "https://github.com/BeraliduGit/Intro-to-Backing/issues"
@@ -23,7 +23,9 @@
     "cors": "^2.8.5",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^9.2.4",
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "validator": "^13.11.0"
   }
 }

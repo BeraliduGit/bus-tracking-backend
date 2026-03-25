@@ -1,4 +1,4 @@
-import City from "../models/city.model.js";
+import { getPassengerCityModel } from "../modules/passenger/models/index.js";
 
 const defaultSriLankanCities = [
   { name: "Colombo", lat: 6.9271, lng: 79.8612 },
@@ -46,6 +46,7 @@ const normalizeCities = (cities = []) =>
     );
 
 const upsertCities = async (cities) => {
+  const City = getPassengerCityModel();
   const normalized = normalizeCities(cities);
 
   if (!normalized.length) {
@@ -70,6 +71,7 @@ const upsertCities = async (cities) => {
 
 const getCities = async (req, res) => {
   try {
+    const City = getPassengerCityModel();
     const cities = await City.find({}, { _id: 0, name: 1, lat: 1, lng: 1 })
       .sort({ name: 1 })
       .lean();

@@ -1,7 +1,8 @@
-import BusLocation from "../models/busLocation.model.js";
+import { getPassengerBusLocationModel } from "../modules/passenger/models/index.js";
 
 export const updateBusLocation = async (req, res) => {
   try {
+    const BusLocation = getPassengerBusLocationModel();
     const { busId, latitude, longitude, speed } = req.body;
 
     const bus = await BusLocation.findOneAndUpdate(
@@ -23,6 +24,7 @@ export const updateBusLocation = async (req, res) => {
 
 export const getBusLocation = async (req, res) => {
   try {
+    const BusLocation = getPassengerBusLocationModel();
     const buses = await BusLocation.find();
     res.json(buses);
   } catch (error) {

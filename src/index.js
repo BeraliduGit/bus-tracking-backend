@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import connectToDatabase from "./config/database.js";
+import { connectDatabases } from "./config/databases.js";
 import app from "./app.js";
 
 dotenv.config({
@@ -8,7 +8,7 @@ dotenv.config({
 
 const startServer = async () => {
     try{
-        await connectToDatabase();
+        await connectDatabases();
 
         app.on("error", (error) => {
             console.log("EROOR", error);

@@ -1,7 +1,8 @@
-import User from "../models/user.model.js";
+import { getPassengerUserModel } from "../modules/passenger/models/index.js";
 
 const registerUser = async (req, res) => {
     try {
+        const User = getPassengerUserModel();
         const { fullName, phoneNumber, password } = req.body;
         const normalizedFullName = (fullName || "").trim();
         const normalizedPhoneNumber = (phoneNumber || "").trim();
@@ -34,6 +35,7 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
+        const User = getPassengerUserModel();
         const { phoneNumber, password } = req.body;
         const normalizedPhoneNumber = (phoneNumber || "").trim();
 

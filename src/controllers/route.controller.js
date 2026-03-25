@@ -1,4 +1,4 @@
-import Route from "../models/route.model.js";
+import { getPassengerRouteModel } from "../modules/passenger/models/index.js";
 
 const toFiniteNumber = (value) => {
     if (typeof value === "number") {
@@ -84,6 +84,7 @@ const normalizeRouteForClient = (route) => {
 
 const listRouteFilters = async (req, res) => {
     try {
+        const Route = getPassengerRouteModel();
         const [routeNumbers, startCities, endCities] = await Promise.all([
             Route.distinct("routeNumber"),
             Route.distinct("startCity"),
@@ -109,6 +110,7 @@ const listRouteFilters = async (req, res) => {
 
 const listRoutes = async (req, res) => {
     try {
+        const Route = getPassengerRouteModel();
         const routeNumber = (req.query.routeNumber || "").trim();
         const startCity = (req.query.startCity || "").trim();
         const endCity = (req.query.endCity || "").trim();
