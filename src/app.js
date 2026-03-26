@@ -22,6 +22,12 @@ app.use(cors({
 }));
 app.use(express.json()); //middleware to parse JSON request bodies
 
+// logger for debug
+app.use((req, res, next) => {
+  console.log(`[DEBUG] ${req.method} ${req.originalUrl}`);
+  next();
+});
+
 // routes import
 import userRoutes from "./routes/user.route.js";
 import cityRoutes from "./routes/city.route.js";

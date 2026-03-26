@@ -53,6 +53,14 @@ const DriverSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    routeStartingLocation: {
+      type: String,
+      trim: true,
+    },
+    routeEndingLocation: {
+      type: String,
+      trim: true,
+    },
     vehicleType: {
       type: String,
       enum: ["sedan", "suv", "bus", "van", "truck"],
@@ -93,9 +101,9 @@ const DriverSchema = new mongoose.Schema(
 DriverSchema.index({ currentLocation: "2dsphere" });
 
 // Hash password before saving
-DriverSchema.pre("save", async function (next) {
+DriverSchema.pre("save", async function () {
   if (!this.isModified("password")) {
-    next();
+    return;
   }
 
   const salt = await bcrypt.genSalt(BCRYPT_ROUNDS);

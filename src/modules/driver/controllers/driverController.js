@@ -5,7 +5,7 @@ const { generateToken } = require("../middleware/auth");
 // @route   POST /api/drivers/signup
 exports.signUp = async (req, res) => {
   try {
-    const { name, email, phone, nic, drivingLicenseId, password } = req.body;
+    const { name, email, phone, nic, drivingLicenseId, busNumber, busRouteNumber, routeStartingLocation, routeEndingLocation, password } = req.body;
 
     // Validation
     if (!name || !email || !phone || !nic || !drivingLicenseId || !password) {
@@ -31,6 +31,10 @@ exports.signUp = async (req, res) => {
       phone,
       nic,
       drivingLicenseId,
+      busNumber,
+      busRouteNumber,
+      routeStartingLocation,
+      routeEndingLocation,
       password,
     });
 
@@ -140,7 +144,8 @@ exports.getDetails = async (req, res) => {
 // @route   PUT /api/drivers/:id
 exports.updateDetails = async (req, res) => {
   try {
-    const { name, phone, busNumber, busRouteName, busRouteNumber } = req.body;
+    console.log(`[DEBUG] updateDetails hit for driver ${req.params.id} with body:`, req.body);
+    const { name, phone, busNumber, busRouteName, busRouteNumber, routeStartingLocation, routeEndingLocation } = req.body;
 
     let driver = await Driver.findById(req.params.id);
 
@@ -157,6 +162,8 @@ exports.updateDetails = async (req, res) => {
     if (busNumber) driver.busNumber = busNumber;
     if (busRouteName) driver.busRouteName = busRouteName;
     if (busRouteNumber) driver.busRouteNumber = busRouteNumber;
+    if (routeStartingLocation) driver.routeStartingLocation = routeStartingLocation;
+    if (routeEndingLocation) driver.routeEndingLocation = routeEndingLocation;
 
     driver = await driver.save();
 
@@ -248,8 +255,11 @@ exports.getProfile = async (req, res) => {
         busNumber: driver.busNumber,
         busRouteName: driver.busRouteName,
         busRouteNumber: driver.busRouteNumber,
+        routeStartingLocation: driver.routeStartingLocation,
+        routeEndingLocation: driver.routeEndingLocation,
         status: driver.status,
         isActive: driver.isActive,
+        createdAt: driver.createdAt,
       },
     });
   } catch (error) {

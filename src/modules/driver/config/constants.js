@@ -12,7 +12,7 @@ module.exports = {
     "mongodb://localhost:27017/bus-tracking-driver",
 
   // JWT Configuration
-  JWT_SECRET: process.env.JWT_SECRET,
+  JWT_SECRET: process.env.JWT_SECRET || "development_secret_key_do_not_use_in_production",
   JWT_EXPIRE: process.env.JWT_EXPIRE || "7d",
 
   // Geolocation Configuration
