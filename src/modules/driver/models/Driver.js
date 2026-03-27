@@ -53,6 +53,11 @@ const DriverSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    activeBus: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Bus",
+      default: null,
+    },
     routeStartingLocation: {
       type: String,
       trim: true,

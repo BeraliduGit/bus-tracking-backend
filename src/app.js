@@ -11,6 +11,7 @@ const driverRoutes = {
   passengers: require("./modules/driver/routes/passengers"),
   routes: require("./modules/driver/routes/routes"),
   locations: require("./modules/driver/routes/locations"),
+  buses: require("./modules/driver/routes/buses"),
 };
 
 const driverErrorHandler = require("./modules/driver/middleware/errorHandler");
@@ -48,6 +49,7 @@ app.use("/api/driver/drivers", driverRoutes.drivers);
 app.use("/api/driver/passengers", driverRoutes.passengers);
 app.use("/api/driver/routes", driverRoutes.routes);
 app.use("/api/driver/locations", driverRoutes.locations);
+app.use("/api/driver/buses", driverRoutes.buses);
 
 app.use("/api/drivers", driverRoutes.drivers);
 app.use("/api/passengers", driverRoutes.passengers);

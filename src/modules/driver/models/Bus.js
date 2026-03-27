@@ -10,8 +10,20 @@ const BusSchema = new mongoose.Schema(
     },
     registrationNumber: {
       type: String,
-      required: [true, "Please provide a registration number"],
       unique: true,
+      sparse: true,
+    },
+    busRouteNumber: {
+      type: String,
+      trim: true,
+    },
+    routeStartingLocation: {
+      type: String,
+      trim: true,
+    },
+    routeEndingLocation: {
+      type: String,
+      trim: true,
     },
     manufacturer: {
       type: String,
@@ -24,7 +36,7 @@ const BusSchema = new mongoose.Schema(
     year: Number,
     capacity: {
       type: Number,
-      required: [true, "Please provide bus capacity"],
+      default: 50,
     },
     currentPassengers: {
       type: Number,
@@ -40,7 +52,7 @@ const BusSchema = new mongoose.Schema(
       ref: "Driver",
       default: null,
     },
-    amenities: [String], // ["AC", "USB Charging", "WiFi", etc.]
+    amenities: [String],
     lastMaintenanceDate: Date,
     nextMaintenanceDate: Date,
     status: {

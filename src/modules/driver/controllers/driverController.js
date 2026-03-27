@@ -119,7 +119,7 @@ exports.login = async (req, res) => {
 // @route   GET /api/drivers/:id
 exports.getDetails = async (req, res) => {
   try {
-    const driver = await Driver.findById(req.params.id);
+    const driver = await Driver.findById(req.params.id).populate('activeBus');
 
     if (!driver) {
       return res.status(404).json({
@@ -234,7 +234,7 @@ exports.updateLocation = async (req, res) => {
 // @route   GET /api/drivers/:id/profile
 exports.getProfile = async (req, res) => {
   try {
-    const driver = await Driver.findById(req.params.id);
+    const driver = await Driver.findById(req.params.id).populate('activeBus');
 
     if (!driver) {
       return res.status(404).json({
@@ -260,6 +260,7 @@ exports.getProfile = async (req, res) => {
         status: driver.status,
         isActive: driver.isActive,
         createdAt: driver.createdAt,
+        activeBus: driver.activeBus, // Include the activeBus reference
       },
     });
   } catch (error) {
