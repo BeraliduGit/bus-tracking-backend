@@ -1,8 +1,10 @@
 const jwt = require("jsonwebtoken");
+const config = require("../config/constants");
 
 const authenticateToken = (req, res, next) => {
-  if (!process.env.JWT_SECRET) {
-    console.error("JWT_SECRET is not defined in environment variables");
+  const secret = config.JWT_SECRET;
+  if (!secret) {
+    console.error("JWT_SECRET is not defined in environment variables or constants");
     return res.status(500).json({ message: "Server configuration error" });
   }
 
@@ -14,7 +16,7 @@ const authenticateToken = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, secret);
     req.user = decoded;
     next();
   } catch (error) {
@@ -23,12 +25,13 @@ const authenticateToken = (req, res, next) => {
 };
 
 const generateToken = (userId, role) => {
-  if (!process.env.JWT_SECRET) {
-    throw new Error("JWT_SECRET is not defined in environment variables");
+  const secret = config.JWT_SECRET;
+  if (!secret) {
+    throw new Error("JWT_SECRET is not defined in environment variables or constants");
   }
 
-  return jwt.sign({ id: userId, role }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE || "7d",
+  return jwt.sign({ id: userId, role }, secret, {
+    expiresIn: config.JWT_EXPIRE || "7d",
   });
 };
 
