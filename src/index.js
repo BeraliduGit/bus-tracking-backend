@@ -15,7 +15,7 @@ const startServer = async () => {
         const server = http.createServer(app);
         const io = new Server(server, {
             cors: {
-                origin: "http://localhost:3000",
+                origin: "*",
                 methods: ["GET", "POST"],
             },
         });
@@ -27,19 +27,24 @@ const startServer = async () => {
 
             socket.on("join:route", (routeId) => {
                 if (!routeId) return;
-                socket.join('route:${routeId}');
-                console.log('socket ${socket.id}joined route ${routeId}');
+                socket.join(`route:${routeId}`);
+                console.log(`socket ${socket.id} joined route ${routeId}`);
             });
 
             socket.on("leave:route", ({ routeId }) => {
                 if (!routeId) return;
-                socket.leave('route:${routeId}');
-                console.log('socket ${socket.id} left route ${routeId}');
+                socket.leave(`route:${routeId}`);
+                console.log(`socket ${socket.id} left route ${routeId}`);
             });
 
             socket.on("driver:location:update", (data) => {
-                const { driverId, routeId, lat, lng, speed, heading, timestamp } = data;
-
+                const driverId = data.driverId;
+                const routeId = String(data.routeNumber || data.routeId);
+                const lat = data.location?.lat ?? data.lat;
+                const lng = data.location?.lng ?? data.lng;
+                const speed = data.speed ?? null;
+                const heading = data.heading ?? null;
+                const timestamp = data.timestamp ?? new Date().toISOString();
 
                 if (!driverId || !routeId || lat == null || lng == null) {
                     return;
@@ -47,14 +52,15 @@ const startServer = async () => {
 
                 const locationData = {
                     driverId,
+                    routeNumber: routeId,
                     routeId,
                     location: {
                         lat,
                         lng,
                     },
-                    speed: speed ?? null,
-                    heading: heading ?? null,
-                    timestamp: timestamp ?? new Date().toISOString(),
+                    speed,
+                    heading,
+                    timestamp,
                 };
 
                 io.to(`route:${routeId}`).emit("driver:location:update", locationData);
