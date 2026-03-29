@@ -15,12 +15,30 @@ exports.signUp = async (req, res) => {
       });
     }
 
-    // Check if driver already exists
-    let driver = await Driver.findOne({ email });
-    if (driver) {
+    // Check if driver already exists by email
+    let existingEmail = await Driver.findOne({ email });
+    if (existingEmail) {
       return res.status(400).json({
         success: false,
         message: "Driver with this email already exists",
+      });
+    }
+
+    // Check if driver already exists by NIC
+    let existingNic = await Driver.findOne({ nic });
+    if (existingNic) {
+      return res.status(400).json({
+        success: false,
+        message: "Driver with this NIC already exists",
+      });
+    }
+
+    // Check if driver already exists by Driving License ID
+    let existingLicense = await Driver.findOne({ drivingLicenseId });
+    if (existingLicense) {
+      return res.status(400).json({
+        success: false,
+        message: "Driver with this driving license already exists",
       });
     }
 
