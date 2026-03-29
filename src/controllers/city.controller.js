@@ -1,4 +1,7 @@
-import { getPassengerCityModel } from "../modules/passenger/models/index.js";
+import {
+  getPassengerCityModel,
+  getPassengerRouteModel,
+} from "../modules/passenger/models/index.js";
 
 const defaultSriLankanCities = [
   { name: "Colombo", lat: 6.9271, lng: 79.8612 },
@@ -72,17 +75,60 @@ const upsertCities = async (cities) => {
 const getCities = async (req, res) => {
   try {
     const City = getPassengerCityModel();
-    const cities = await City.find({}, { _id: 0, name: 1, lat: 1, lng: 1 })
-      .sort({ name: 1 })
+    const Route = getPassengerRouteModel();
+
+    // 1. Fetch cities from the City collection
+    const storedCities = await City.find({}, { _id: 0, name: 1, lat: 1, lng: 1 })
       .lean();
 
+    // 2. Fetch unique city names from the Route collection (startCity and endCity)
+    const [startCities, endCities] = await Promise.all([
+      Route.distinct("startCity"),
+      Route.distinct("endCity"),
+    ]);
+
+    // 3. Merge all city names and deduplicate
+    const cityNamesMap = new Map();
+
+    // Add stored cities first (preserving their lat/lng if available)
+    storedCities.forEach((city) => {
+      if (city.name) {
+        cityNamesMap.set(city.name.trim(), {
+          name: city.name.trim(),
+          lat: city.lat,
+          lng: city.lng,
+        });
+      }
+    });
+
+    // Add cities from routes if not already present
+    [...startCities, ...endCities].forEach((name) => {
+      if (name && typeof name === "string") {
+        const trimmedName = name.trim();
+        if (trimmedName && !cityNamesMap.has(trimmedName)) {
+          cityNamesMap.set(trimmedName, {
+            name: trimmedName,
+            lat: null, // Locations from routes don't necessarily have lat/lng in the city model
+            lng: null,
+          });
+        }
+      }
+    });
+
+    // 4. Convert back to array, filter out empty names, and sort alphabetically
+    const consolidatedCities = Array.from(cityNamesMap.values())
+      .filter((city) => city.name.length > 0)
+      .sort((a, b) => a.name.localeCompare(b.name));
+
     return res.status(200).json({
+      success: true,
       message: "Cities fetched successfully",
-      count: cities.length,
-      cities,
+      count: consolidatedCities.length,
+      cities: consolidatedCities,
     });
   } catch (error) {
     return res.status(500).json({
+      success: false,
       message: "Error fetching cities",
       error: error.message,
     });
