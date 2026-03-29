@@ -38,6 +38,49 @@ exports.signUp = async (req, res) => {
       password,
     });
 
+    // Save bus details to Bus collection — same as "Add Bus" flow
+    const Bus = require("../models/Bus");
+    if (busNumber) {
+      try {
+        console.log(`[signup] Attempting to save bus: ${busNumber} for driver: ${driver._id}`);
+        const existingBus = await Bus.findOne({ busNumber });
+        console.log(`[signup] existingBus found:`, existingBus ? existingBus._id : 'NONE');
+
+        let savedBus;
+        if (!existingBus) {
+          savedBus = await Bus.create({
+            busNumber,
+            registrationNumber: busNumber,
+            busRouteNumber: busRouteNumber || "",
+            routeStartingLocation: routeStartingLocation || "",
+            routeEndingLocation: routeEndingLocation || "",
+            capacity: 50,
+            assignedDriver: driver._id,
+            status: "active",
+          });
+          console.log(`[signup] Bus CREATED: ${savedBus._id}`);
+        } else {
+          savedBus = await Bus.findByIdAndUpdate(
+            existingBus._id,
+            { assignedDriver: driver._id },
+            { new: true }
+          );
+          console.log(`[signup] Existing bus UPDATED and linked: ${savedBus._id}`);
+        }
+
+        const updatedDriver = await Driver.findByIdAndUpdate(
+          driver._id,
+          { activeBus: savedBus._id },
+          { new: true }
+        );
+        console.log(`[signup] activeBus set: ${updatedDriver.activeBus} for driver ${driver._id}`);
+      } catch (busError) {
+        console.error("[signup] Bus save error:", busError.message);
+      }
+    } else {
+      console.warn("[signup] No busNumber provided — skipping bus creation");
+    }
+
     // Generate token
     const token = generateToken(driver._id, "driver");
 
@@ -154,6 +197,27 @@ exports.updateDetails = async (req, res) => {
         success: false,
         message: "Driver not found",
       });
+    }
+
+    // Attemp to sync modifications with the Bus model based on the old busNumber
+    const Bus = require("../models/Bus");
+    try {
+      const originalBusNumber = driver.busNumber;
+      if (originalBusNumber && (busNumber || busRouteNumber || routeStartingLocation || routeEndingLocation)) {
+        let linkedBus = await Bus.findOne({ busNumber: originalBusNumber, assignedDriver: driver._id });
+        if (linkedBus) {
+          if (busNumber) {
+            linkedBus.busNumber = busNumber;
+            linkedBus.registrationNumber = busNumber; 
+          }
+          if (busRouteNumber) linkedBus.busRouteNumber = busRouteNumber;
+          if (routeStartingLocation) linkedBus.routeStartingLocation = routeStartingLocation;
+          if (routeEndingLocation) linkedBus.routeEndingLocation = routeEndingLocation;
+          await linkedBus.save();
+        }
+      }
+    } catch (err) {
+       console.error("Failed to sync profile update with Bus model:", err);
     }
 
     // Update fields
