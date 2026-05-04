@@ -12,6 +12,8 @@ const driverRoutes = {
   routes: require("./modules/driver/routes/routes"),
   locations: require("./modules/driver/routes/locations"),
   buses: require("./modules/driver/routes/buses"),
+  schedules: require("./modules/driver/routes/schedules"),
+  alerts: require("./modules/driver/routes/alerts"),
 };
 
 const driverErrorHandler = require("./modules/driver/middleware/errorHandler");
@@ -50,11 +52,15 @@ app.use("/api/driver/passengers", driverRoutes.passengers);
 app.use("/api/driver/routes", driverRoutes.routes);
 app.use("/api/driver/locations", driverRoutes.locations);
 app.use("/api/driver/buses", driverRoutes.buses);
+app.use("/api/driver/schedules", driverRoutes.schedules);
+app.use("/api/driver/alerts", driverRoutes.alerts);
 
 app.use("/api/drivers", driverRoutes.drivers);
 app.use("/api/passengers", driverRoutes.passengers);
 app.use("/api/routes", driverRoutes.routes);
 app.use("/api/locations", driverRoutes.locations);
+app.use("/api/schedules", driverRoutes.schedules);
+app.use("/api/alerts", driverRoutes.alerts);
 
 app.get("/api/health", (req, res) => {
 	res.status(200).json({
